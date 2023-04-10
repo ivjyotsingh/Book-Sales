@@ -26,3 +26,8 @@ fetch_sbc <- function(){
 fetch_ysbp <- function(){
   read.csv(here::here("Data","ysbp.csv"))
 }
+
+#' @export
+fetch_forecast <- function(){
+  read.csv(here::here("Data","forecast.csv"))
+}

@@ -1,8 +1,8 @@
 box::use(
-  shiny[NS,tabPanel,fluidRow,column,moduleServer,plotOutput,renderPlot],
+  shiny[NS,tabPanel,fluidRow,column,moduleServer],
   dplyr[filter,mutate,select,group_by,summarise],
-  ggplot2[ggplot,geom_point,geom_line,aes,facet_wrap,labs,theme,
-          element_rect,element_text,element_blank],
+  echarts4r[echarts4rOutput,renderEcharts4r,group_by,e_charts,
+            e_line,e_facet,e_group,e_connect_group],
   lubridate[year]
 )
 
@@ -17,14 +17,17 @@ box::use(
 ui <- function(id) {
   ns <- NS(id)
 
-  tabPanel("Growth",
+  tabPanel("Trend",
            fluidRow(
-             column(3,
+             column(2,
                     GrowthCards$card1(ns("country_select"))
                     ),
-             column(9,
-                    GrowthCards$card2("Yearly Growth Graph By Country",plotOutput(ns("growth")))
-                    )
+             column(5,
+                    GrowthCards$card2("KaggleRama",echarts4rOutput(ns("growthr")))
+                    ),
+             column(5,
+                    GrowthCards$card2("KaggleMart",echarts4rOutput(ns("growthm")))
+             )
            )
   )
 }
@@ -33,38 +36,46 @@ ui <- function(id) {
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
     
-    output$growth <- renderPlot({
+    output$growthr <- renderEcharts4r({
     
-    data$fetch_data() |>
-    filter(country == input$country_select) |>
-    mutate(date = as.Date(date)) |>
-    mutate(Year = year(date)) |>
-    select(country,store,product,num_sold,Year) |>
-    group_by(Year,country,store,product) |>
-    summarise(Trend = mean(num_sold),.groups = "drop") |>
-    ggplot() +
-    geom_point(mapping = aes(x = Year,y = Trend),size = 3) +
-    geom_line(mapping = aes(x = Year,y = Trend),color = "#193964",lwd = 1.2) +
-    facet_wrap(.~store+product,ncol = 3,scales = "free") +
-    labs(title = input$country_select,
-         y = "",
-         x = "")+
-    theme(panel.background = element_rect(fill = NA),
-          strip.text = element_text(
-            size = 13,color = "black"
-          ),
-          strip.background = element_rect(
-            color = "black",fill = "white",linetype = "solid"
-          ),
-          axis.ticks = element_blank(),
-          plot.title = element_text(size = 18),
-          axis.text.y = element_blank(),
-          axis.text.x = element_text(size = 15)
-    )
-        
-
+        data$fetch_data() |>
+        filter(country == input$country_select) |>
+        filter(store == "KaggleRama") |>
+        mutate(Year = year(date)) |>
+        select(product,Sales,Year) |>
+        dplyr::group_by(Year,product) |>
+        summarise(Trend = mean(Sales),.groups = "drop") |>
+        mutate(Year = as.factor(Year)) |>
+        mutate(product = as.factor(product)) |>
+        echarts4r::group_by(product) |>
+        e_charts(Year) |>
+        e_line(Trend) |>
+        e_facet(cols = 2,row=2) |>
+        e_group("grp")
+    
+    })
+    
+    output$growthm <- renderEcharts4r({
+      
+        data$fetch_data() |>
+        filter(country == input$country_select) |>
+        filter(store == "KaggleMart") |>
+        mutate(Year = year(date)) |>
+        select(product,Sales,Year) |>
+        dplyr::group_by(Year,product) |>
+        summarise(Trend = mean(Sales),.groups = "drop") |>
+        mutate(Year = as.factor(Year)) |>
+        mutate(product = as.factor(product)) |>
+        echarts4r::group_by(product) |>
+        e_charts(Year) |>
+        e_line(Trend) |>
+        e_facet(cols = 2,row=2) |>
+        e_group("grp") |>
+        e_connect_group("grp")
       
     })
+    
+    
   })
 }
 

@@ -21,10 +21,11 @@ ui <- function(id) {
     "Sale of Books",
     theme = bs_theme(bootswatch = "zephyr"),
     StaticTab$ui(ns("statictab")),
-    singlets$ui(ns("trendtab")),
+    
     GrowthTab$ui(ns("growthtab")),
-    YearlySeasonalityTab$ui(ns("yearseas")),
-    WeeklySeasonalityTab$ui(ns("weekseas")),
+    singlets$ui(ns("trendtab")),
+    #YearlySeasonalityTab$ui(ns("yearseas")),
+    #WeeklySeasonalityTab$ui(ns("weekseas")),
     ForecastTab$ui(ns("forecasting"))
     
   )
@@ -37,8 +38,8 @@ server <- function(id) {
     singlets$server("trendtab")
     StaticTab$server("statictab")
     GrowthTab$server("growthtab")
-    YearlySeasonalityTab$server("yearseas")
-    WeeklySeasonalityTab$server("weekseas")
+    #YearlySeasonalityTab$server("yearseas")
+    #WeeklySeasonalityTab$server("weekseas")
     ForecastTab$server("forecasting")
     
   })

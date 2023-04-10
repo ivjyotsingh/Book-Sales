@@ -18,7 +18,7 @@ card1 <- function(productargument){
 #' @export
 card2 <- function(titleargument,plotargument) {
   card(
-    height = 800,
+    height = 330,
     card_header(titleargument),
     card_body_fill(plotargument)
   )

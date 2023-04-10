@@ -22,9 +22,29 @@ ui <- function(id) {
              column(3,
                     YearSeasCards$card1(ns("product_select"))
              ),
-             column(9,
+             column(3,
+                    YearSeasCards$card2("Belgium",plotOutput(ns("ysbelgium")))
+             ),
+             column(3,
+                    YearSeasCards$card2("Yearly Seasonality Of Each Product",plotOutput(ns("yearseas")))
+             ),
+             column(3,
                     YearSeasCards$card2("Yearly Seasonality Of Each Product",plotOutput(ns("yearseas")))
              )
+           ),
+           fluidRow(
+             column(3,
+                    offset = 3),
+             column(3,
+                    YearSeasCards$card2("Yearly Seasonality Of Each Product",plotOutput(ns("yearseas")))
+             ),
+             column(3,
+                    YearSeasCards$card2("Yearly Seasonality Of Each Product",plotOutput(ns("yearseas")))
+             ),
+             column(3,
+                    YearSeasCards$card2("Yearly Seasonality Of Each Product",plotOutput(ns("yearseas")))
+             ),
+             
            )
   )
 }
@@ -32,6 +52,25 @@ ui <- function(id) {
 #' @export
 server <- function(id) {
   moduleServer(id, function(input, output, session) {
+    
+    
+    output$ysbelgium <- renderEcharts4r({
+      
+      
+      
+      
+      
+      
+    })
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     output$yearseas <- renderPlot({
       

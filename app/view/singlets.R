@@ -9,9 +9,9 @@ box::use(
 box::use(
   shiny[NS,plotOutput,moduleServer,renderPlot,tabPanel,fluidRow,column,reactive],
   dplyr[filter,mutate,group_by,summarise,ungroup],
-  ggplot2[ggplot,geom_line,aes,geom_histogram,geom_vline,geom_col,geom_hline,scale_fill_identity,
-          theme_classic,theme,element_text,labs,element_rect,element_blank,margin],
-  lubridate[wday,month,year]
+  lubridate[wday,month,year],
+  echarts4r[e_charts,e_line,e_legend,renderEcharts4r,echarts4rOutput,
+            e_tooltip,e_show_loading,e_bar,e_histogram]
 
 )
 
@@ -26,24 +26,24 @@ ui <- function(id) {
   ns <- NS(id)
   
   
-tabPanel("Single Time Series",
+tabPanel("Explore a single time series",
            fluidRow(
              column(3,
                     SingleTsCards$card1(ns("country_select"),ns("product_select"),ns("store_select"))
                     ),
              column(9,
-                    SingleTsCards$card2("Single Time Series",plotOutput(ns("singlets")))
+                    SingleTsCards$card2("Single Time Series",echarts4rOutput(ns("singlets")))
                     )
            ),
            fluidRow(
              column(3,
-                    SingleTsCards$card2("Distribution",plotOutput(ns("dist")))
+                    SingleTsCards$card2("Distribution",echarts4rOutput(ns("dist")))
                     ),
              column(3,
-                    SingleTsCards$card2("Weekly Seasonality",plotOutput(ns("weekseas")))
+                    SingleTsCards$card2("Weekly Seasonality",echarts4rOutput(ns("weekseas")))
                     ),
              column(6,
-                    SingleTsCards$card2("Yearly Seasonality",plotOutput(ns("yearseas")))
+                    SingleTsCards$card2("Yearly Seasonality",echarts4rOutput(ns("yearseas")))
                     )
            )
   ) 
@@ -65,85 +65,58 @@ server <- function(id) {
     })
     
     
-    output$singlets <- renderPlot({
+    output$singlets <- renderEcharts4r({
       
         ReactiveData() |>
-        ggplot() +
-        geom_line(mapping = aes(x = date,y = num_sold)) +
-        labs(x = "",
-             y = "Books Sold") +
-        theme(panel.background = element_rect(fill = NA),
-              axis.ticks = element_blank(),
-              axis.text = element_text(size = 15),
-              axis.title.y = element_text(size = 15,margin = margin(0,10,0,0)))
+        e_charts(date) |>
+        e_line(Sales) |>
+        e_legend(show = FALSE) |>
+        e_tooltip(trigger = "axis") |>
+        e_show_loading()
       
     })
     
-    output$dist <- renderPlot({
+    output$dist <- renderEcharts4r({
       
         ReactiveData() |>
-        ggplot() +
-        geom_histogram(mapping = aes(x = num_sold)
-                       ,bins = 40
-                       ,color = "black"
-                       ,fill = "white") +
-        geom_vline(aes(xintercept = mean(num_sold))
-                   ,linetype = "dashed"
-                   ,color = "blue"
-                   ,size = 1.4) +
-        theme(axis.text.x = element_text(size = 15),
-              axis.text.y = element_text(size = 15),
-              panel.background = element_rect(fill = NA),
-              axis.ticks = element_blank(),
-              axis.title.x = element_text(size = 15,margin = margin(5,0,0,0)),
-              axis.title.y = element_text(size = 15)) +
-        labs(x = "Books Sold",
-             y = "Count")
+        e_charts() |>
+        e_histogram(Sales, name = "histogram") |>
+        e_tooltip(trigger = "axis") |>
+        e_legend(show = FALSE) |>
+        e_show_loading()
       
       
     })
     
-    output$weekseas <- renderPlot({
+    output$weekseas <- renderEcharts4r({
       
         ReactiveData() |>
         mutate(DayOfWeek = wday(date,label = T,abbr = T)) |>
         group_by(DayOfWeek) |>
-        summarise(num_sold = mean(num_sold)) |>
-        mutate(Mean = mean(num_sold)) |>
-        mutate(color = c("blue", "#CCCCCC","#CCCCCC","#CCCCCC","#CCCCCC","#3e9c15","blue")) |>
-        ggplot() +
-        geom_col(mapping = aes(x = DayOfWeek, y = num_sold,fill = color)) +
-        geom_hline(aes(yintercept = Mean),color = "red",lwd = 1) +
-        scale_fill_identity() +
-        theme(axis.text.x = element_text(size = 15),
-              axis.text.y = element_text(size = 15),
-              axis.title.y =element_text(size=14,margin = margin(0,10,0,0)),
-              panel.background = element_rect(fill = NA),
-              axis.ticks = element_blank()) +
-        labs(x = "",
-             y = "Books sold")
+        summarise(Sales = mean(Sales)) |>
+        mutate(Mean = mean(Sales)) |>
+        mutate(DayOfWeek = as.factor(as.character(DayOfWeek))) |>
+        e_charts(DayOfWeek) |>
+        e_bar(Sales) |>
+        e_legend(show = FALSE) |>
+        e_show_loading()
       
     })
     
-    output$yearseas <- renderPlot({
+    output$yearseas <- renderEcharts4r({
       
         ReactiveData() |>
         mutate(Month = month(date,label = T,abbr = T)) |>
         mutate(Year = year(date)) |>
         group_by(Year,Month) |>
-        summarise(num_sold = mean(num_sold),.groups = "drop") |>
+        summarise(Sales = mean(Sales),.groups = "drop") |>
         ungroup() |>
-        ggplot() +
-        geom_line(mapping = aes(x=Month,y=num_sold,group = as.factor(Year),color = as.factor(Year)),lwd=1) +
-        labs(x = "",
-             y = "Books sold",
-             color = "Year") +
-        theme(axis.text.x = element_text(size = 15),
-              axis.text.y = element_text(size = 15),
-              axis.title.y =element_text(size=14,margin = margin(0,10,0,0)),
-              legend.position = "bottom",
-              panel.background = element_rect(fill = NA),
-              axis.ticks = element_blank()) 
+        mutate(Month = as.factor(as.character(Month))) |>
+        echarts4r::group_by(Year) |>
+        e_charts(Month) |>
+        e_line(Sales) |>
+        e_tooltip(trigger = "axis") |>
+        e_show_loading()
         
       
     })

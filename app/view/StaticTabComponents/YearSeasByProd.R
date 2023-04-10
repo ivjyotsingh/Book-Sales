@@ -22,7 +22,7 @@ server <- function(id){
       data$fetch_ysbp() |>
       echarts4r::group_by(product) |>
       e_charts(date) |>
-      e_line(num_sold)
+      e_line(Sales)
       
       
     })
