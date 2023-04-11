@@ -10,7 +10,7 @@ box::use(
   shiny[NS,tabPanel,fluidRow,column,moduleServer,reactive],
   dplyr[filter],
   echarts4r[e_charts,e_line,e_legend,e_tooltip,e_show_loading,
-            echarts4rOutput,renderEcharts4r]
+            echarts4rOutput,renderEcharts4r,e_toolbox_feature,e_datazoom]
 )
 
 
@@ -52,7 +52,12 @@ server <- function(id) {
       e_line(Sales) |>
       e_legend(show = FALSE) |>
       e_tooltip(trigger = "axis") |>
-      e_show_loading()
+      e_show_loading()|>
+        e_toolbox_feature(
+          feature = c("saveAsImage",
+                      "dataZoom")
+        )|>
+        e_datazoom(x_index = 0)
     
     })
   })

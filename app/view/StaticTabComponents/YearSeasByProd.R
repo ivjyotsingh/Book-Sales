@@ -3,7 +3,8 @@ box::use(
 )
 
 box::use(
-  echarts4r[group_by,e_charts,e_line,echarts4rOutput,renderEcharts4r],
+  echarts4r[group_by,e_charts,e_line,echarts4rOutput,renderEcharts4r,
+            e_tooltip,e_toolbox_feature,e_datazoom],
   shiny[NS,moduleServer]
 )
 
@@ -22,7 +23,13 @@ server <- function(id){
       data$fetch_ysbp() |>
       echarts4r::group_by(product) |>
       e_charts(date) |>
-      e_line(Sales)
+      e_line(Sales) |>
+      e_tooltip(trigger = "axis")|>
+        e_toolbox_feature(
+          feature = c("saveAsImage",
+                      "dataZoom")
+        )|>
+        e_datazoom(x_index = 0)
       
       
     })

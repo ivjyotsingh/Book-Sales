@@ -11,7 +11,8 @@ box::use(
   dplyr[filter,mutate,group_by,summarise,ungroup],
   lubridate[wday,month,year],
   echarts4r[e_charts,e_line,e_legend,renderEcharts4r,echarts4rOutput,
-            e_tooltip,e_show_loading,e_bar,e_histogram]
+            e_tooltip,e_show_loading,e_bar,e_histogram,e_toolbox,
+            e_toolbox_feature,e_datazoom]
 
 )
 
@@ -72,7 +73,11 @@ server <- function(id) {
         e_line(Sales) |>
         e_legend(show = FALSE) |>
         e_tooltip(trigger = "axis") |>
-        e_show_loading()
+        e_show_loading() |>
+        e_toolbox_feature(
+          feature = c("saveAsImage")
+        )|>
+        e_datazoom(x_index = 0)
       
     })
     
@@ -83,7 +88,11 @@ server <- function(id) {
         e_histogram(Sales, name = "histogram") |>
         e_tooltip(trigger = "axis") |>
         e_legend(show = FALSE) |>
-        e_show_loading()
+        e_show_loading()|>
+        e_toolbox_feature(
+          feature = c("saveAsImage")
+        )
+        
       
       
     })
@@ -93,13 +102,19 @@ server <- function(id) {
         ReactiveData() |>
         mutate(DayOfWeek = wday(date,label = T,abbr = T)) |>
         group_by(DayOfWeek) |>
-        summarise(Sales = mean(Sales)) |>
+        summarise(Sales = round(mean(Sales))) |>
         mutate(Mean = mean(Sales)) |>
         mutate(DayOfWeek = as.factor(as.character(DayOfWeek))) |>
         e_charts(DayOfWeek) |>
         e_bar(Sales) |>
         e_legend(show = FALSE) |>
-        e_show_loading()
+        e_show_loading() |>
+        e_tooltip(trigger = "axis")|>
+        e_toolbox_feature(
+          feature = "saveAsImage") |>
+        e_toolbox_feature(
+          feature = "magicType",
+          type = list("line", "bar"))
       
     })
     
@@ -109,14 +124,18 @@ server <- function(id) {
         mutate(Month = month(date,label = T,abbr = T)) |>
         mutate(Year = year(date)) |>
         group_by(Year,Month) |>
-        summarise(Sales = mean(Sales),.groups = "drop") |>
+        summarise(Sales = round(mean(Sales)),.groups = "drop") |>
         ungroup() |>
         mutate(Month = as.factor(as.character(Month))) |>
         echarts4r::group_by(Year) |>
         e_charts(Month) |>
         e_line(Sales) |>
         e_tooltip(trigger = "axis") |>
-        e_show_loading()
+        e_show_loading()|>
+        e_toolbox_feature(
+          feature = c("saveAsImage",
+                      "dataZoom")
+        )
         
       
     })

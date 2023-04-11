@@ -2,7 +2,8 @@ box::use(
   shiny[NS,tabPanel,fluidRow,column,moduleServer],
   dplyr[filter,mutate,select,group_by,summarise],
   echarts4r[echarts4rOutput,renderEcharts4r,group_by,e_charts,
-            e_line,e_facet,e_group,e_connect_group],
+            e_line,e_facet,e_group,e_connect_group,e_tooltip,
+            e_toolbox_feature],
   lubridate[year]
 )
 
@@ -51,7 +52,11 @@ server <- function(id) {
         e_charts(Year) |>
         e_line(Trend) |>
         e_facet(cols = 2,row=2) |>
-        e_group("grp")
+        e_group("grp") |>
+        e_tooltip(trigger = "axis") |>
+        e_toolbox_feature(
+          feature = c("saveAsImage")
+        )
     
     })
     
@@ -71,7 +76,11 @@ server <- function(id) {
         e_line(Trend) |>
         e_facet(cols = 2,row=2) |>
         e_group("grp") |>
-        e_connect_group("grp")
+        e_connect_group("grp")|>
+        e_tooltip(trigger = "axis") |>
+        e_toolbox_feature(
+          feature = c("saveAsImage")
+        )
       
     })
     
