@@ -10,7 +10,8 @@ box::use(
   shiny[NS,tabPanel,fluidRow,column,moduleServer,reactive],
   dplyr[filter],
   echarts4r[e_charts,e_line,e_legend,e_tooltip,e_show_loading,
-            echarts4rOutput,renderEcharts4r,e_toolbox_feature,e_datazoom]
+            echarts4rOutput,renderEcharts4r,e_toolbox_feature,e_datazoom,
+            e_y_axis]
 )
 
 
@@ -57,7 +58,8 @@ server <- function(id) {
           feature = c("saveAsImage",
                       "dataZoom")
         )|>
-        e_datazoom(x_index = 0)
+        e_datazoom(x_index = 0)|>
+        e_y_axis(scale = TRUE)
     
     })
   })

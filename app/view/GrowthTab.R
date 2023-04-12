@@ -3,7 +3,7 @@ box::use(
   dplyr[filter,mutate,select,group_by,summarise],
   echarts4r[echarts4rOutput,renderEcharts4r,group_by,e_charts,
             e_line,e_facet,e_group,e_connect_group,e_tooltip,
-            e_toolbox_feature],
+            e_toolbox_feature,e_y_axis],
   lubridate[year]
 )
 
@@ -56,7 +56,8 @@ server <- function(id) {
         e_tooltip(trigger = "axis") |>
         e_toolbox_feature(
           feature = c("saveAsImage")
-        )
+        )|>
+        e_y_axis(scale = TRUE)
     
     })
     
@@ -80,7 +81,8 @@ server <- function(id) {
         e_tooltip(trigger = "axis") |>
         e_toolbox_feature(
           feature = c("saveAsImage")
-        )
+        )|>
+        e_y_axis(scale = TRUE)
       
     })
     

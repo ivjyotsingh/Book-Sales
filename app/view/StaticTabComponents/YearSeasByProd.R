@@ -4,7 +4,7 @@ box::use(
 
 box::use(
   echarts4r[group_by,e_charts,e_line,echarts4rOutput,renderEcharts4r,
-            e_tooltip,e_toolbox_feature,e_datazoom],
+            e_tooltip,e_toolbox_feature,e_datazoom,e_y_axis],
   shiny[NS,moduleServer]
 )
 
@@ -29,7 +29,8 @@ server <- function(id){
           feature = c("saveAsImage",
                       "dataZoom")
         )|>
-        e_datazoom(x_index = 0)
+        e_datazoom(x_index = 0) |>
+        e_y_axis(scale = TRUE)
       
       
     })

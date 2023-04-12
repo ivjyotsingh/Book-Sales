@@ -12,7 +12,7 @@ box::use(
   lubridate[wday,month,year],
   echarts4r[e_charts,e_line,e_legend,renderEcharts4r,echarts4rOutput,
             e_tooltip,e_show_loading,e_bar,e_histogram,e_toolbox,
-            e_toolbox_feature,e_datazoom]
+            e_toolbox_feature,e_datazoom,e_y_axis]
 
 )
 
@@ -77,7 +77,8 @@ server <- function(id) {
         e_toolbox_feature(
           feature = c("saveAsImage")
         )|>
-        e_datazoom(x_index = 0)
+        e_datazoom(x_index = 0)|>
+        e_y_axis(scale = TRUE)
       
     })
     
@@ -114,7 +115,8 @@ server <- function(id) {
           feature = "saveAsImage") |>
         e_toolbox_feature(
           feature = "magicType",
-          type = list("line", "bar"))
+          type = list("line", "bar"))|>
+        e_y_axis(scale = TRUE)
       
     })
     
@@ -135,7 +137,8 @@ server <- function(id) {
         e_toolbox_feature(
           feature = c("saveAsImage",
                       "dataZoom")
-        )
+        )|>
+        e_y_axis(scale = TRUE)
         
       
     })
