@@ -26,7 +26,7 @@ ui <- function(id) {
                     SingleTsCards$card1(ns("country_select"),ns("product_select"),ns("store_select"))
              ),
              column(9,
-                    SingleTsCards$card2("Forecast of a single time series",echarts4rOutput(ns("singleforecast")))
+                    SingleTsCards$card2("One year forecast",echarts4rOutput(ns("singleforecast")))
              )
            )
          ) 
@@ -50,7 +50,8 @@ server <- function(id) {
     
       forecast_select() |>
       e_charts(date) |>
-      e_line(Sales) |>
+      e_line(Sales,
+             symbol = "none") |>
       e_legend(show = FALSE) |>
       e_tooltip(trigger = "axis") |>
       e_show_loading()|>

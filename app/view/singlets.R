@@ -70,7 +70,8 @@ server <- function(id) {
       
         ReactiveData() |>
         e_charts(date) |>
-        e_line(Sales) |>
+        e_line(Sales,
+               symbol = "none") |>
         e_legend(show = FALSE) |>
         e_tooltip(trigger = "axis") |>
         e_show_loading() |>
@@ -131,7 +132,8 @@ server <- function(id) {
         mutate(Month = as.factor(as.character(Month))) |>
         echarts4r::group_by(Year) |>
         e_charts(Month) |>
-        e_line(Sales) |>
+        e_line(Sales,
+               symbol = "circle") |>
         e_tooltip(trigger = "axis") |>
         e_show_loading()|>
         e_toolbox_feature(

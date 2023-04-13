@@ -23,7 +23,8 @@ server <- function(id){
         data$fetch_sbc() |>
         echarts4r::group_by(country) |>
         e_charts(date) |>
-        e_line(Sales) |>
+        e_line(Sales,
+               symbol = "none") |>
         e_tooltip(trigger = "axis")|>
         e_toolbox_feature(
           feature = c("saveAsImage",

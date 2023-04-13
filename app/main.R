@@ -19,7 +19,8 @@ ui <- function(id) {
   ns <- NS(id)
   navbarPage(
     "Sale of Books",
-    theme = bs_theme(bootswatch = "zephyr"),
+    theme = bs_theme(bootswatch = "zephyr",
+                     primary = "#EDEFF7"),
     StaticTab$ui(ns("statictab")),
     
     GrowthTab$ui(ns("growthtab")),

@@ -50,14 +50,15 @@ server <- function(id) {
         mutate(product = as.factor(product)) |>
         echarts4r::group_by(product) |>
         e_charts(Year) |>
-        e_line(Trend) |>
+        e_line(Trend,
+               symbol = "circle") |>
+        e_y_axis(scale = TRUE) |>
         e_facet(cols = 2,row=2) |>
         e_group("grp") |>
         e_tooltip(trigger = "axis") |>
         e_toolbox_feature(
           feature = c("saveAsImage")
-        )|>
-        e_y_axis(scale = TRUE)
+        )
     
     })
     
@@ -74,7 +75,9 @@ server <- function(id) {
         mutate(product = as.factor(product)) |>
         echarts4r::group_by(product) |>
         e_charts(Year) |>
-        e_line(Trend) |>
+        e_line(Trend,
+               symbol = "circle") |>
+        e_y_axis(scale = TRUE) |>
         e_facet(cols = 2,row=2) |>
         e_group("grp") |>
         e_connect_group("grp")|>
